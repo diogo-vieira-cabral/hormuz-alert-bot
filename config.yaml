@@ -1,0 +1,131 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# config.yaml — News Alert Bot Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# This is the ONLY file you need to edit.
+# Swap this out entirely to monitor a different topic (e.g. Red Sea,
+# Taiwan Strait, oil markets) — zero Python changes needed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Label shown in every Telegram notification (e.g. "HORMUZ", "RED SEA")
+topic: "HORMUZ"
+
+# How often to check all feeds (in minutes)
+# Lower = faster alerts, higher = fewer API calls
+# Recommended: 10–15 for breaking news topics
+check_interval_minutes: 5
+
+# Minimum time (hours) before the same article can trigger another alert.
+# Prevents duplicate pings when multiple feeds pick up the same story.
+alert_cooldown_hours: 1
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ALERT TIERS
+# ─────────────────────────────────────────────────────────────────────────────
+# Tiers are evaluated in ORDER — most severe first. First match wins.
+# Each tier has:
+#   label    — shown in the Telegram message header
+#   emoji    — shown in the Telegram message header
+#   notify   — true = send Telegram alert | false = log only (silent)
+#   keywords — list of lowercase substrings to match in title + summary
+#
+# To silence a tier without deleting it: set notify: false
+# To add a new tier: copy a block and insert it in priority order
+# ─────────────────────────────────────────────────────────────────────────────
+
+tiers:
+
+  - label: "CRITICAL"
+    emoji: "🚨"
+    notify: true
+    keywords:
+      # Strait status changes — the big one
+      - "strait open"
+      - "hormuz open"
+      - "reopened"
+      - "reopen"
+      - "strait closed"
+      - "hormuz closed"
+      - "blockade lifted"
+      # Military escalation
+      - "ceasefire broken"
+      - "ceasefire collapse"
+      - "war escalat"
+      - "nuclear"
+      - "us attack iran"
+      - "iran attack"
+      - "missile strike"
+      - "airstrike"
+      - "bombardment"
+      # Shipping incidents
+      - "vessel seized"
+      - "tanker seized"
+      - "tanker attacked"
+      - "ship sunk"
+      - "mine"
+      - "irgc seiz"
+
+  - label: "HIGH IMPACT"
+    emoji: "⚠️"
+    notify: true
+    keywords:
+      # Diplomacy
+      - "ceasefire"
+      - "peace deal"
+      - "negotiations"
+      - "iran deal"
+      - "un resolution"
+      - "security council"
+      - "sanctions"
+      - "trump iran"
+      - "us iran"
+      # Markets
+      - "oil price"
+      - "brent crude"
+      - "crude spike"
+      - "energy crisis"
+      - "oil surge"
+      # Shipping
+      - "shipping halt"
+      - "drone attack"
+      - "irgc"
+      - "revolutionary guard"
+      - "tanker attack"
+      - "stranded vessel"
+      - "force majeure"
+
+  - label: "UPDATE"
+    emoji: "📡"
+    notify: false     # <-- change to true if you want all Hormuz mentions
+    keywords:
+      - "hormuz"
+      - "strait of hormuz"
+      - "persian gulf shipping"
+      - "gulf tanker"
+      - "oil tanker"
+      - "lng shipment"
+      - "persian gulf"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RSS FEEDS
+# ─────────────────────────────────────────────────────────────────────────────
+# Any public RSS feed works. Add or remove as needed.
+# Google News search feeds (bottom of list) are fastest for breaking news —
+# they update within minutes and don't require API keys.
+# ─────────────────────────────────────────────────────────────────────────────
+
+feeds:
+  # General news
+  - https://feeds.bbci.co.uk/news/world/middle_east/rss.xml
+  - https://www.aljazeera.com/xml/rss/all.xml
+  - https://feeds.reuters.com/reuters/topNews
+
+  # Energy & shipping trade press
+  - https://oilprice.com/rss/main
+  - https://www.offshore-energy.biz/feed/
+
+  # Google News keyword search feeds — fastest for breaking news
+  - https://news.google.com/rss/search?q=strait+of+hormuz&hl=en-US&gl=US&ceid=US:en
+  - https://news.google.com/rss/search?q=hormuz+shipping+oil&hl=en-US&gl=US&ceid=US:en
+  - https://news.google.com/rss/search?q=iran+tanker+ceasefire&hl=en-US&gl=US&ceid=US:en
