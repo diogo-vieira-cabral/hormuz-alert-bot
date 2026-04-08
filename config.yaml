@@ -105,8 +105,9 @@ tiers:
 # ─────────────────────────────────────────────────────────────────────────────
 
 feeds:
-  # Reuters — world news feed. Faster than topNews for regional events.
-  - https://feeds.reuters.com/reuters/worldNews
+  # Reuters via Google News proxy — direct Reuters RSS died March 2026
+  # allinurl: restricts results to reuters.com URLs only
+  - https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com&ceid=US:en&hl=en-US&gl=US
 
-  # Associated Press — top news. Independent sourcing, complements Reuters.
-  - https://feeds.apnews.com/rss/apf-topnews
+  # AP via Google News proxy — same approach, independent sourcing
+  - https://news.google.com/rss/search?q=when:24h+allinurl:apnews.com&ceid=US:en&hl=en-US&gl=US
