@@ -241,7 +241,7 @@ def main():
 
     log.info("Starting %s bot", topic)
     log.info(
-        "%d feeds | check every %d min | cooldown %gh",
+        "%d feeds | check every %d min",
         len(feeds),
         interval_min,
     )
