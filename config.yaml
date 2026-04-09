@@ -16,16 +16,11 @@
 # Keyword philosophy:
 #   Keywords must imply CHANGE, not static situation.
 #   "hormuz" matches "the strait remains closed" — useless.
-#   "reopens" matches only when something actually changes.
 # ─────────────────────────────────────────────────────────────────────────────
 
 topic: "HORMUZ"
 
 check_interval_minutes: 5
-
-# Minimum hours before the same article can alert again.
-# Prevents duplicate pings when Reuters and AP both cover the same event.
-alert_cooldown_hours: 2
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -41,8 +36,6 @@ tiers:
     notify: true
     keywords:
       # Strait status — change words only
-      - "reopens"
-      - "reopen"
       - "strait opens"
       - "hormuz opens"
       - "passage restored"
@@ -52,7 +45,6 @@ tiers:
       - "hormuz closed"
       # Military events — new incidents only
       - "missile strike"
-      - "airstrike"
       - "tanker seized"
       - "vessel seized"
       - "ship seized"
@@ -64,7 +56,6 @@ tiers:
       - "ceasefire violated"
       - "ceasefire ends"
       - "war resumes"
-      - "nuclear"
 
   - label: "HIGH IMPACT"
     emoji: "⚠️"
@@ -82,7 +73,6 @@ tiers:
       - "sanctions imposed"
       - "un resolution"
       # Market dislocation — not routine price moves
-      - "oil surges"
       - "crude surges"
       - "oil spikes"
       - "energy crisis"

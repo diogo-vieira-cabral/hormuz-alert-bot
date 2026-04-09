@@ -64,7 +64,7 @@ def load_dotenv(path: str = ".env") -> None:
 def load_config(path: str = "config.yaml") -> dict:
     """
     Loads the YAML config file. This is where all behaviour lives —
-    feeds, keywords, tiers, cooldowns, notification settings.
+    feeds, keywords, tiers, notification settings.
     Raises a clear error if the file is missing.
     """
     config_file = Path(path)
@@ -158,8 +158,6 @@ def poll_feeds(
     token: str,
     chat_id: str,
     seen: set,
-    cooldowns: dict,
-    cooldown_hours: float,
     seed_mode: bool = False,
 ) -> int:
     """
@@ -201,17 +199,10 @@ def poll_feeds(
             if not tier:
                 continue
 
-            # Cooldown check: same article can't re-alert within cooldown window
-            now_ts = time.time()
-            if now_ts - cooldowns.get(uid, 0) < cooldown_hours * 3600:
-                log.debug("Cooldown active — skipping: %s", title[:60])
-                continue
-
             # Send alert
             log.info("[%s] %s | %s", tier["label"], source_name, title[:80])
             msg = format_alert(tier, title, link, source_name, topic)
             if send_telegram(token, chat_id, msg):
-                cooldowns[uid] = now_ts
                 alerts_sent += 1
                 time.sleep(1)  # avoid Telegram rate limit (30 msg/sec global)
 
@@ -241,7 +232,6 @@ def main():
     # Pull settings from config
     topic = cfg.get("topic", "Alert Bot")
     interval_min = cfg.get("check_interval_minutes", 15)
-    cooldown_hours = cfg.get("alert_cooldown_hours", 1)
     feeds = cfg.get("feeds", [])
     tiers = cfg.get("tiers", [])
 
@@ -254,12 +244,10 @@ def main():
         "%d feeds | check every %d min | cooldown %gh",
         len(feeds),
         interval_min,
-        cooldown_hours,
     )
 
     # In-memory state (resets on restart — fine for this use case)
     seen: set = set()  # article UIDs already processed
-    cooldowns: dict = {}  # uid -> timestamp of last alert
 
     # ── Startup: seed seen articles so we don't blast old news ────────────────
     log.info("Seeding existing articles (no alerts on first scan)...")
@@ -270,8 +258,6 @@ def main():
         token,
         chat_id,
         seen,
-        cooldowns,
-        cooldown_hours,
         seed_mode=True,
     )
     log.info("Seeded %d articles. Live monitoring starts now.", len(seen))
@@ -290,9 +276,7 @@ def main():
     # ── Main polling loop ─────────────────────────────────────────────────────
     while True:
         try:
-            n = poll_feeds(
-                feeds, tiers, topic, token, chat_id, seen, cooldowns, cooldown_hours
-            )
+            n = poll_feeds(feeds, tiers, topic, token, chat_id, seen)
             if n:
                 log.info("%d alert(s) sent.", n)
             else:
